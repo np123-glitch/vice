@@ -1249,6 +1249,20 @@ func InCharlieAirspace(p math.Point2LL, alt int) bool {
 	return inAirspace(DB.CharlieAirspace, p, alt)
 }
 
+// UnderBravoShelf returns true if the given position is laterally within a
+// Bravo airspace volume but below its floor altitude. This is used to enforce
+// the 200kt speed limit below Class B shelves for VFR aircraft.
+func UnderBravoShelf(p math.Point2LL, alt int) bool {
+	for _, vols := range DB.BravoAirspace {
+		for _, vol := range vols {
+			if alt < vol.Floor && vol.Inside(p, vol.Floor+1) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func InDeltaAirspace(p math.Point2LL, alt int) bool {
 	return inAirspace(DB.DeltaAirspace, p, alt)
 }
